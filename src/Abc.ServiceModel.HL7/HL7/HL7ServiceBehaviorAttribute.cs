@@ -1,4 +1,6 @@
-﻿namespace Abc.ServiceModel.HL7
+﻿#if NETFRAMEWORK
+
+namespace Abc.ServiceModel.HL7
 {
     using System;
     using System.Collections.ObjectModel;
@@ -54,3 +56,5 @@
         }
     }
 }
+
+#endif

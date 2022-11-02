@@ -119,21 +119,14 @@
         /// <param name="clientOperation">The run-time object that exposes customization properties for the operation described by <paramref name="operationDescription"/>.</param>
         public void ApplyClientBehavior(OperationDescription operationDescription, ClientOperation clientOperation)
         {
-            if (operationDescription == null) {  throw new ArgumentNullException("operationDescription", "operationDescription != null"); }
-            if (!(operationDescription.DeclaringContract != null)) {  throw new ArgumentNullException("operationDescription", "operationDescription.DeclaringContract != null"); }
-            if (!(operationDescription.DeclaringContract.Operations != null)) {  throw new ArgumentNullException("operationDescription", "operationDescription.DeclaringContract.Operations != null"); }
-            if (!(operationDescription.DeclaringContract.Operations.Count > 0)) {  throw new ArgumentException("operationDescription", "operationDescription.DeclaringContract.Operations.Count > 0"); }
-            if (!(operationDescription.Messages != null)) {  throw new ArgumentNullException("operationDescription", "operationDescription.Messages != null"); }
-            if (!(operationDescription.Messages.Count > 0)) {  throw new ArgumentException("operationDescription", "operationDescription.Messages.Count > 0"); }
-
-            var attribute = operationDescription.DeclaringContract.Operations[0].Behaviors.Find<HL7SaveResponseOperationContractAttribute>();
-            var outputType = operationDescription.SyncMethod.ReturnType;
-
-            Type inputType = null;
-            if (operationDescription != null && operationDescription.Messages != null && operationDescription.Messages.Count > 0 && operationDescription.Messages[0].Body != null && operationDescription.Messages[0].Body.Parts != null && operationDescription.Messages[0].Body.Parts != null && operationDescription.Messages[0].Body.Parts.Count > 0)
+            if (operationDescription is null)
             {
-                inputType = operationDescription.Messages[0].Body.Parts[0].Type;
+                throw new ArgumentNullException(nameof(operationDescription));
             }
+
+            var attribute = operationDescription.GetOperationContract<HL7SaveResponseOperationContractAttribute>();
+            var outputType = operationDescription.GetReturnType();
+            var inputType = operationDescription.GetInputType();
 
             if (clientOperation != null)
             {
@@ -151,8 +144,9 @@
                 }
 
                 // Serializer
-                var outputSerializerType = GetSerializerType(operationDescription.SyncMethod.GetParameters()[0]);
-                var inputSerializerType = GetSerializerType(operationDescription.SyncMethod.ReturnTypeCustomAttributes);
+                var methodInfo = operationDescription.GetMethodInfo();
+                var outputSerializerType = GetSerializerType(methodInfo.GetParameters()[0]);
+                var inputSerializerType = GetSerializerType(methodInfo.ReturnTypeCustomAttributes);
 
                 clientOperation.SerializeRequest = true;
                 clientOperation.DeserializeReply = true;
@@ -167,16 +161,14 @@
         /// <param name="dispatchOperation">The run-time object that exposes customization properties for the operation described by <paramref name="operationDescription"/>.</param>
         public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
         {
-            if (operationDescription == null) {  throw new ArgumentNullException("operationDescription", "operationDescription != null"); }
-            if (!(operationDescription.DeclaringContract != null)) {  throw new ArgumentNullException("operationDescription", "operationDescription.DeclaringContract != null"); }
-            if (!(operationDescription.DeclaringContract.Operations != null)) {  throw new ArgumentNullException("operationDescription", "operationDescription.DeclaringContract.Operations != null"); }
-            if (!(operationDescription.DeclaringContract.Operations.Count > 0)) {  throw new ArgumentException("operationDescription", "operationDescription.DeclaringContract.Operations.Count > 0"); }
-            if (!(operationDescription.Messages != null)) {  throw new ArgumentNullException("operationDescription", "operationDescription.Messages != null"); }
-            if (!(operationDescription.Messages.Count > 0)) {  throw new ArgumentException("operationDescription", "operationDescription.Messages.Count > 0"); }
+            if (operationDescription is null)
+            {
+                throw new ArgumentNullException(nameof(operationDescription));
+            }
 
-            var attribute = operationDescription.DeclaringContract.Operations[0].Behaviors.Find<HL7SaveResponseOperationContractAttribute>();
-            var inputType = operationDescription.Messages[0].Body.Parts[0].Type;
-            var outputType = operationDescription.SyncMethod.ReturnType;
+            var attribute = operationDescription.GetOperationContract<HL7SaveResponseOperationContractAttribute>();
+            var inputType = operationDescription.GetInputType();
+            var outputType = operationDescription.GetReturnType();
 
             // Interactions
             if (dispatchOperation != null)
@@ -187,7 +179,7 @@
 
                     this.Template = Helper.GetUrnType(attribute.Interaction, attribute.Version);
                 }
-
+#if !NETCOREAPP
                 if (dispatchOperation.ReplyAction != null)
                 {
                     attribute.ReplyInteraction = dispatchOperation.ReplyAction.Substring(HL7Constants.Namespace.Length + 1);
@@ -195,10 +187,12 @@
                 }
 
                 // Serializer
-                var inputSerializerType = GetSerializerType(operationDescription.SyncMethod.GetParameters()[0]);
-                var outputSerializerType = GetSerializerType(operationDescription.SyncMethod.ReturnTypeCustomAttributes);
+                var methodInfo = operationDescription.GetMethodInfo();
+                var inputSerializerType = GetSerializerType(methodInfo.GetParameters()[0]);
+                var outputSerializerType = GetSerializerType(methodInfo.ReturnTypeCustomAttributes);
 
                 dispatchOperation.Formatter = new HL7SaveResponseMessageFormatter(attribute, inputType, outputType, inputSerializerType, outputSerializerType);
+#endif
             }
         }
 

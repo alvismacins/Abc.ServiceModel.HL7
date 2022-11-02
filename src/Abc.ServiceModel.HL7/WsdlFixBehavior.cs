@@ -3,6 +3,7 @@
 // Copyright (c) PlaceholderCompany. All rights reserved.
 // </copyright>
 // ----------------------------------------------------------------------------
+#if NETFRAMEWORK
 
 namespace Abc.IdentityModel.Protocols.WSSecurityPolicy
 {
@@ -558,3 +559,5 @@ namespace Abc.IdentityModel.Protocols.WSSecurityPolicy
         }
     }
 }
+
+#endif

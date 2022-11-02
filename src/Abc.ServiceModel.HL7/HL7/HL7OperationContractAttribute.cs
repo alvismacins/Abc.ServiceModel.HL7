@@ -322,26 +322,14 @@
         /// <param name="clientOperation">The run-time object that exposes customization properties for the operation described by <paramref name="operationDescription"/>.</param>
         public void ApplyClientBehavior(OperationDescription operationDescription, ClientOperation clientOperation)
         {
-            if (operationDescription == null) {  throw new ArgumentNullException("operationDescription", "operationDescription != null"); }
-            if (!(operationDescription.DeclaringContract != null)) {  throw new ArgumentNullException("operationDescription", "operationDescription.DeclaringContract != null"); }
-            if (!(operationDescription.DeclaringContract.Operations != null)) {  throw new ArgumentNullException("operationDescription", "operationDescription.DeclaringContract.Operations != null"); }
-            if (!(operationDescription.DeclaringContract.Operations.Count > 0)) {  throw new ArgumentException("operationDescription", "operationDescription.DeclaringContract.Operations.Count > 0"); }
-            if (!(operationDescription.Messages != null)) {  throw new ArgumentNullException("operationDescription", "operationDescription.Messages != null"); }
-            if (!(operationDescription.Messages.Count > 0)) {  throw new ArgumentException("operationDescription", "operationDescription.Messages.Count > 0"); }
-
-            var attribute = operationDescription.DeclaringContract.Operations[0].Behaviors.Find<HL7OperationContractAttribute>();
-            var outputType = operationDescription.SyncMethod?.ReturnType;
-#if NET45
-            if (outputType == null) {
-                outputType = operationDescription.TaskMethod.ReturnType.GetGenericArguments()[0];
-            }
-#endif
-
-            Type inputType = null;
-            if (operationDescription != null && operationDescription.Messages != null && operationDescription.Messages.Count > 0 && operationDescription.Messages[0].Body != null && operationDescription.Messages[0].Body.Parts != null && operationDescription.Messages[0].Body.Parts != null && operationDescription.Messages[0].Body.Parts.Count > 0)
+            if (operationDescription is null)
             {
-                inputType = operationDescription.Messages[0].Body.Parts[0].Type;
+                throw new ArgumentNullException(nameof(operationDescription));
             }
+
+            var attribute = operationDescription.GetOperationContract<HL7OperationContractAttribute>();
+            var outputType = operationDescription.GetReturnType();
+            var inputType = operationDescription.GetInputType();
 
             if (clientOperation != null)
             {
@@ -365,21 +353,17 @@
                 {
                     throw new OperationCanceledException("ReplyAction is incorrect");
                 }
+
+                // Serializer
+                var methodInfo = operationDescription.GetMethodInfo();
+                var outputSerializerType = GetSerializerType(methodInfo.GetParameters()[0]);
+                var inputSerializerType = GetSerializerType(methodInfo.ReturnTypeCustomAttributes);
+
+                clientOperation.SerializeRequest = true;
+                clientOperation.DeserializeReply = true;
+
+                clientOperation.Formatter = new HL7MessageFormatter(attribute, outputType, inputType, inputSerializerType, outputSerializerType);
             }
-
-            // Serializer
-#if NET45
-            var outputSerializerType = GetSerializerType( ( operationDescription.SyncMethod ?? operationDescription.TaskMethod ).GetParameters()[ 0 ] );
-            var inputSerializerType = GetSerializerType( ( operationDescription.SyncMethod ?? operationDescription.TaskMethod ).ReturnTypeCustomAttributes );
-#else
-            var outputSerializerType = GetSerializerType(operationDescription.SyncMethod.GetParameters()[0]);
-            var inputSerializerType = GetSerializerType(operationDescription.SyncMethod.ReturnTypeCustomAttributes);
-#endif
-
-            clientOperation.SerializeRequest = true;
-            clientOperation.DeserializeReply = true;
-            
-            clientOperation.Formatter = new HL7MessageFormatter(attribute, outputType, inputType, inputSerializerType, outputSerializerType);
         }
 
         /// <summary>
@@ -389,20 +373,14 @@
         /// <param name="dispatchOperation">The run-time object that exposes customization properties for the operation described by <paramref name="operationDescription"/>.</param>
         public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
         {
-            if (operationDescription == null) {  throw new ArgumentNullException("operationDescription", "operationDescription != null"); }
-            if (!(operationDescription.DeclaringContract != null)) {  throw new ArgumentNullException("operationDescription", "operationDescription.DeclaringContract != null"); }
-            if (!(operationDescription.DeclaringContract.Operations != null)) {  throw new ArgumentNullException("operationDescription", "operationDescription.DeclaringContract.Operations != null"); }
-            if (!(operationDescription.DeclaringContract.Operations.Count > 0)) {  throw new ArgumentException("operationDescription", "operationDescription.DeclaringContract.Operations.Count > 0"); }
-            if (!(operationDescription.Messages != null)) {  throw new ArgumentNullException("operationDescription", "operationDescription.Messages != null"); }
-            if (!(operationDescription.Messages.Count > 0)) {  throw new ArgumentException("operationDescription", "operationDescription.Messages.Count > 0"); }
+            if (operationDescription is null)
+            {
+                throw new ArgumentNullException(nameof(operationDescription));
+            }
 
-            var attribute = operationDescription.DeclaringContract.Operations[0].Behaviors.Find<HL7OperationContractAttribute>();
-            var inputType = operationDescription.Messages[0].Body.Parts[0].Type;
-#if NET45
-            var outputType = ( operationDescription.SyncMethod ?? operationDescription.TaskMethod ).ReturnType;
-#else
-            var outputType = operationDescription.SyncMethod.ReturnType;
-#endif
+            var attribute = operationDescription.GetOperationContract<HL7OperationContractAttribute>();
+            var inputType = operationDescription.GetInputType();
+            var outputType = operationDescription.GetReturnType();
 
             // Interactions
             if ( dispatchOperation != null)
@@ -412,7 +390,7 @@
                     attribute.Interaction = dispatchOperation.Action.Substring(HL7Constants.Namespace.Length + 1);
                     this.Template = Helper.GetUrnType(attribute.Interaction, attribute.Version);
                 }
-
+#if !NETCOREAPP
                 if (dispatchOperation.ReplyAction != null)
                 {
                     attribute.ReplyInteraction = dispatchOperation.ReplyAction.Substring(HL7Constants.Namespace.Length + 1);
@@ -427,18 +405,14 @@
                 // {
                 //    throw new OperationCanceledException("ReplyAction is incorrect");
                 // }
-            }
+                // Serializer
+                var methodInfo = operationDescription.GetMethodInfo();
+                var outputSerializerType = GetSerializerType(methodInfo.GetParameters()[0]);
+                var inputSerializerType = GetSerializerType(methodInfo.ReturnTypeCustomAttributes);
 
-            // Serializer
-#if NET45
-            var inputSerializerType = GetSerializerType( ( operationDescription.SyncMethod ?? operationDescription.TaskMethod ).GetParameters()[ 0 ] );
-            var outputSerializerType = GetSerializerType( ( operationDescription.SyncMethod ?? operationDescription.TaskMethod ).ReturnTypeCustomAttributes );
-#else
-            var inputSerializerType = GetSerializerType(operationDescription.SyncMethod.GetParameters()[0]);
-            var outputSerializerType = GetSerializerType(operationDescription.SyncMethod.ReturnTypeCustomAttributes);
+                dispatchOperation.Formatter = new HL7MessageFormatter(attribute, inputType, outputType, inputSerializerType, outputSerializerType);
 #endif
-
-            dispatchOperation.Formatter = new HL7MessageFormatter(attribute, inputType, outputType, inputSerializerType, outputSerializerType);
+            }
         }
 
         /// <summary>

@@ -107,7 +107,7 @@ namespace Abc.ServiceModel.HL7
             }
 
             if (this.attribute.AcknowledgementResponse || this.outputParameterType == typeof(void)
-#if NET45
+#if NET45_OR_GREATER
                 || this.outputParameterType == typeof( Task )
 #endif
                 )

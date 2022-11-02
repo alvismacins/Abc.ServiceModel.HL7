@@ -1,8 +1,4 @@
-﻿// ----------------------------------------------------------------------------
-// <copyright file="HL7ErrorHandler.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-// ----------------------------------------------------------------------------
+﻿#if NETFRAMEWORK
 
 namespace Abc.ServiceModel.HL7
 {
@@ -102,3 +98,5 @@ namespace Abc.ServiceModel.HL7
         }
     }
 }
+
+#endif
