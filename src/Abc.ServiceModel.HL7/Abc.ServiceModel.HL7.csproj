@@ -1,0 +1,74 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net471</TargetFrameworks>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+  
+  
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' or '$(TargetFramework)' == 'net40'">
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.configuration" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web.Services" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="HL7\SrProtocol.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SrProtocol.resx</DependentUpon>
+    </Compile>
+    <None Include="Protocol\HL7\ControlActs\ControlActs.cd" />
+    <None Include="Protocol\HL7\temp\HL7QuerySortControl.cs" />
+    <None Include="Protocol\HL7\temp\HL7QueryResponsibleOrganization.cs" />
+    <None Include="Protocol\HL7\temp\HL7QueryPatientId.cs" />
+    <None Include="Protocol\HL7\temp\HL7QueryEventTimeframe.cs" />
+    <None Include="Protocol\HL7\temp\HL7QueryDataEnterer.cs" />
+    <None Include="Protocol\HL7\temp\HL7QueryReceiverDevice.cs" />
+    <None Include="Protocol\HL7\temp\HL7QuerySenderDevice.cs" />
+    <None Include="Protocol\HL7\temp\HL7QueryDevice.cs" />
+    <None Include="Protocol\HL7\temp\HL7QueryByParameterPayload_.cs" />
+    <None Include="Protocol\HL7\temp\QuerySerializer.cs" />
+    <Compile Update="Protocol\HL7\SR1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <None Include="Protocol\HL7\temp\HL7LocalizedText.cs" />
+    <None Include="Protocol\HL7\HL7Acknowledgement.cd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Protocol\HL7\HL7ControlActProcess.cd" />
+    <None Include="Protocol\HL7\HL7Messages.cd" />
+    <None Include="Protocol\HL7\HL7TransmitionWrapper.cd" />
+    <None Include="Protocol\HL7\TypeDiagramma.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HL7\HL7ClientService.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="History.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Protocol\HL7\temp\HL7QuerySortControl.cs" />
+    <Compile Remove="Protocol\HL7\temp\HL7QueryResponsibleOrganization.cs" />
+    <Compile Remove="Protocol\HL7\temp\HL7QueryPatientId.cs" />
+    <Compile Remove="Protocol\HL7\temp\HL7QueryEventTimeframe.cs" />
+    <Compile Remove="Protocol\HL7\temp\HL7QueryDataEnterer.cs" />
+    <Compile Remove="Protocol\HL7\temp\HL7QueryReceiverDevice.cs" />
+    <Compile Remove="Protocol\HL7\temp\HL7QuerySenderDevice.cs" />
+    <Compile Remove="Protocol\HL7\temp\HL7QueryDevice.cs" />
+    <Compile Remove="Protocol\HL7\temp\HL7QueryByParameterPayload_.cs" />
+    <Compile Remove="Protocol\HL7\temp\QuerySerializer.cs" />
+    <Compile Remove="Protocol\HL7\temp\HL7LocalizedText.cs" />
+  </ItemGroup>
+</Project>

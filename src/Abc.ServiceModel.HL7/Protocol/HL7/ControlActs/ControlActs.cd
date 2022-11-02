@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7ControlAct">
+    <Position X="0.75" Y="0.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAgAASAAACAAAABgAQACAQEAQg=</HashCode>
+      <FileName>Protocol\HL7\ControlActs\HL7ControlAct.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7QueryControlAcknowledgement">
+    <Position X="10.5" Y="0.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>ADAIAAAQAAQAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\ControlActs\HL7QueryControlAcknowledgement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7MessageControlAct">
+    <Position X="5.5" Y="0.5" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAICAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\ControlActs\HL7MessageControlAct.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7ClassificatorId">
+    <Position X="0.5" Y="0.5" Width="3.25" />
+    <Members>
+      <Field Name="code" Hidden="true" />
+      <Field Name="codeSystem" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAAAAgQAAAIAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\HL7ClassificatorId.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7PersonId">
+    <Position X="4" Y="0.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\HL7PersonId.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7IdentificationId">
+    <Position X="1" Y="2.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAEAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\HL7IdentificationId.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7II">
+    <Position X="4.25" Y="2.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAgAAAAAAAAAQAAAAEAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\HL7II.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7TemplateId">
+    <Position X="7.75" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\HL7TemplateId.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7InteractionId">
+    <Position X="7.75" Y="3" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\HL7InteractionId.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Abc.ServiceModel.Protocol.HL7.OId">
+    <Position X="11" Y="0.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgIEAAAAAAAAQEgECAAgAAQIAAAKAAAABgAAAADyA=</HashCode>
+      <FileName>Protocol\HL7\OId.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

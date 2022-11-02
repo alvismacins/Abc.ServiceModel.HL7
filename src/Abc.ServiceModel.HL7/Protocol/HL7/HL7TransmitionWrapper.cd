@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7II">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="extension" Hidden="true" />
+      <Field Name="root" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAgAAAAAAAAAQAAAAEAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\HL7II.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7TemplateId">
+    <Position X="4" Y="2.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\HL7TemplateId.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7PersonId">
+    <Position X="7" Y="2.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\HL7PersonId.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7Device">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAgAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Protocol\HL7\HL7Device.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7TransmissionWrapper">
+    <Position X="9.5" Y="0.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQKAAAAgAAAgAAAAAAAEABhAAAAAgAAIgBA=</HashCode>
+      <FileName>Protocol\HL7\HL7TransmissionWrapper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7AttentionLine">
+    <Position X="8" Y="4.75" Width="2" />
+    <Members>
+      <Field Name="attentionLineValue" Hidden="true" />
+      <Field Name="keywordText" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAABAAAAAQAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\HL7AttentionLine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7Acknowledgement">
+    <Position X="4.75" Y="4.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAACAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\HL7Acknowledgement.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Abc.ServiceModel.Protocol.HL7.OId">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="identification" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAEAIEAAAAAAAAAEgAAAgAAAQAAAAIAAAAAgBAAAAiA=</HashCode>
+      <FileName>Protocol\HL7\Oid.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="Abc.ServiceModel.Protocol.HL7.HL7ProcessingCode">
+    <Position X="10.5" Y="8" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABABEAAA=</HashCode>
+      <FileName>Protocol\HL7\HL7ProcessingCode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Abc.ServiceModel.Protocol.HL7.HL7ProcessingModeCode">
+    <Position X="10.5" Y="6.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAICAEAQA=</HashCode>
+      <FileName>Protocol\HL7\HL7ProcessingModeCode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Abc.ServiceModel.Protocol.HL7.HL7AcceptAcknowledgementCode">
+    <Position X="10.5" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAAAAACAAAAAAAAAAAAAAAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\HL7AcceptAcknowledgementCode.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

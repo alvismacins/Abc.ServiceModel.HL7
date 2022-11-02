@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="Abc.ServiceModel.HL7.HL7OperationContext" BaseTypeListCollapsed="true">
+    <Position X="5" Y="0.5" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAgAAAAIAAACABAAAAIEEAAAEAAAAgIAIIIA=</HashCode>
+      <FileName>HL7\HL7OperationContext.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Abc.ServiceModel.HL7.HL7OperationContractAttribute" BaseTypeListCollapsed="true">
+    <Position X="4.75" Y="5.75" Width="7" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAQAECAAAgAAAAAAAGAAAAEAEAAAAAQACwIAAA=</HashCode>
+      <FileName>HL7\HL7OperationContractAttribute.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Abc.ServiceModel.HL7.HL7ServiceBodyWriter">
+    <Position X="14.5" Y="2.5" Width="6" />
+    <Members>
+      <Field Name="localName" Hidden="true" />
+      <Field Name="message" Hidden="true" />
+      <Field Name="serializer" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAICAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>HL7\HL7ServiceBodyWriter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.HL7.HL7MessageFormatter">
+    <Position X="0.5" Y="0.5" Width="4" />
+    <TypeIdentifier>
+      <HashCode>ABAAACCMQAAAAAEACgAAAIAAACxAAAIABAIAABAAAMA=</HashCode>
+      <FileName>HL7\HL7MessageFormatter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Abc.ServiceModel.HL7.HL7ServiceBehaviorAttribute">
+    <Position X="9.75" Y="4" Width="10.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQAACAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>HL7\HL7ServiceBehaviorAttribute.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Abc.ServiceModel.HL7.HL7ErrorHandler">
+    <Position X="9.5" Y="2.25" Width="4.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>HL7\HL7ErrorHandler.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Abc.ServiceModel.HL7.HL7FaultException">
+    <Position X="13.5" Y="5.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAAAQgAAAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>HL7\HL7FaultException.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.HL7.HL7MessageExtension">
+    <Position X="9.5" Y="0.5" Width="5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>HL7\HL7MessageExtension.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.HL7.HL7SubjectSerializerAttribute">
+    <Position X="14.75" Y="0.5" Width="5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>HL7\HL7SubjectSerializerAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="Abc.ServiceModel.HL7.HL7SubjectSerializerTypes">
+    <Position X="8" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEgAAAAAAAAAABAAAAAAAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>HL7\HL7SubjectSerializerTypes.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>

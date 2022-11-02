@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7TransmissionWrapper">
+    <Position X="0.75" Y="2.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQKAAAAgAAggAAAAAAAEABhAAAAAgAAIgBA=</HashCode>
+      <FileName>Protocol\HL7\HL7TransmissionWrapper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7Request">
+    <Position X="6.5" Y="4.25" Width="3.75" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Enum Name="Abc.ServiceModel.Protocol.HL7.HL7Request.RequestType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Protocol\HL7\Request\HL7Request.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAQAAAgAAAAIAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\Request\HL7Request.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7AcknowledgementResponse">
+    <Position X="6.5" Y="2.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\Response\HL7AcknowledgementResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7ApplicationResponse">
+    <Position X="1.25" Y="0.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\Response\HL7ApplicationResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7QueryApplicationResponse">
+    <Position X="10" Y="0.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\Response\HL7QueryApplicationResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Abc.ServiceModel.Protocol.HL7.HL7QueryAcknowledgementResponse">
+    <Position X="6" Y="0.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Protocol\HL7\Response\HL7QueryAcknowledgementResponse.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
