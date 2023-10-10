@@ -1,52 +1,55 @@
-﻿namespace Abc.ServiceModel
+﻿namespace Abc.ServiceModel.HL7.UnitTests
 {
     using System;
     using System.Runtime.Serialization;
     using System.Xml;
     using System.Xml.Linq;
+    using Xml.Schema.Linq;
 
     /// <summary>
-    /// Serializer for subject
+    /// TODO: Update summary.
     /// </summary>
-    public class XElementObjectSerializer : XmlObjectSerializer
+    public class XTypedElementObjectSerializer : XmlObjectSerializer
     {
         private string rootName;
         private string rootNamespace;
-        ////private Type type;
+        private Type type;
+        private ILinqToXsdTypeManager typeManager;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="XElementObjectSerializer"/> class
-        /// to serialize or deserialize an XElement.
-        /// </summary>
-        public XElementObjectSerializer()
+        public XTypedElementObjectSerializer(Type type, ILinqToXsdTypeManager typeManager)
+            : this(type, typeManager, null, null)
         {
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="XElementObjectSerializer"/> class
-        /// to serialize or deserialize an object of the XElement using the
+        /// Initializes a new instance of the <see cref="XmlSerializerObjectSerializer"/> class
+        /// to serialize or deserialize an object of the specified type using the
         /// supplied XML root element and namespace.
         /// </summary>
+        /// <param name="type">The type of the instances that are serialized or deserialized.</param>
         /// <param name="rootName">The name of the XML element that encloses the content to serialize or deserialize.</param>
         /// <param name="rootNamespace">The namespace of the XML element that encloses the content to serialize or deserialize.</param>
-        public XElementObjectSerializer(string rootName, string rootNamespace)
+        public XTypedElementObjectSerializer(Type type, ILinqToXsdTypeManager typeManager, string rootName, string rootNamespace)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            if (typeManager == null)
+            {
+                throw new ArgumentNullException("typeManager");
+            }
+
+            if (!typeof(XTypedElement).IsAssignableFrom(type))
+            {
+                throw new ArgumentException("type");
+            }
+
+            this.type = type;
+            this.typeManager = typeManager;
             this.rootName = rootName ?? string.Empty;
             this.rootNamespace = rootNamespace ?? string.Empty;
         }
-
-        /////// <summary>
-        /////// Initializes a new instance of the <see cref="XElementObjectSerializer"/> class.
-        /////// </summary>
-        /////// <param name="type">The type.</param>
-        /////// <param name="name">The name.</param>
-        ////public XElementObjectSerializer(Type type, XName name) {
-        ////    Contract.Requires<ArgumentNullException>(type != null, "type");
-        ////    Contract.Requires<ArgumentException>(type.BaseType.Name == "XTypedElement", "type");
-
-        ////    this.type = type;
-        ////    this.name = name;
-        ////}
 
         /// <summary>
         /// Gets a value that specifies whether the <see cref="T:System.Xml.XmlDictionaryReader"/> is positioned over an XML element that can be read.
@@ -57,22 +60,16 @@
         /// </returns>
         public override bool IsStartObject(XmlDictionaryReader reader)
         {
-            if (reader is null)
-            {
-                throw new ArgumentNullException(nameof(reader));
-            }
-
             reader.MoveToElement();
-
-            if (!string.IsNullOrEmpty(this.rootName))
+            if (!string.IsNullOrEmpty(rootName))
             {
-                if (!string.IsNullOrEmpty(this.rootNamespace))
+                if (!string.IsNullOrEmpty(rootNamespace))
                 {
-                    return reader.IsStartElement(this.rootName, this.rootNamespace);
+                    return reader.IsStartElement(rootName, rootNamespace);
                 }
                 else
                 {
-                    return reader.IsStartElement(this.rootName);
+                    return reader.IsStartElement(rootName);
                 }
             }
 
@@ -89,14 +86,8 @@
         /// </returns>
         public override object ReadObject(XmlDictionaryReader reader, bool verifyObjectName)
         {
-            var body = XElement.Load(reader);
-            ////if (this.type == null) {
-            return body;
-            ////}
-
-            ////var method = Type.GetType("Xml.Schema.Linq.XTypedServices, Xml.Schema.Linq").GetMethod("ToXTypedElement", new Type[] { typeof(XElement) });
-            ////var generic = method.MakeGenericMethod(this.type);
-            ////return generic.Invoke(null, new object[] { body });
+            var element = XElement.Load(reader);
+            return XTypedServices.ToXTypedElement(element, typeManager, type);
         }
 
         /// <summary>
@@ -120,50 +111,22 @@
         /// <exception cref="T:System.ServiceModel.QuotaExceededException">the maximum number of objects to serialize has been exceeded. Check the <see cref="P:System.Runtime.Serialization.DataContractSerializer.MaxItemsInObjectGraph"/> property.</exception>
         public override void WriteObjectContent(XmlDictionaryWriter writer, object graph)
         {
-            if (writer is null)
+            var body = graph as XTypedElement;
+            if (body == null)
             {
-                throw new ArgumentNullException(nameof(writer));
+                throw new ArgumentException("graph");
             }
 
-            XElement element = graph as XElement;
-
-            // Support XsdToLinq Classes
-            if (element == null)
+            var element = body.Untyped;
+            if (!string.IsNullOrEmpty(rootName))
             {
-                Type graphType = graph.GetType();
-                if (graphType.BaseType.Name == "XTypedElement")
+                if (!string.IsNullOrEmpty(rootNamespace))
                 {
-                    var property = graphType.GetProperty("Untyped");
-                    if (property == null)
-                    {
-                        throw new InvalidOperationException();
-                    }
-
-                    element = (XElement)property.GetValue(graph, new object[0]);
-                }
-            }
-
-            if (element == null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            if (!string.IsNullOrEmpty(this.rootName))
-            {
-                /*
-                if (name.Namespace != element.Name.Namespace) {
-                    element.Add(new XAttribute("xmlns:x", name.Namespace));
-                    element.SetAttributeValue()
-                }
-                 */
-
-                if (!string.IsNullOrEmpty(this.rootNamespace))
-                {
-                    element.Name = XName.Get(this.rootName, this.rootNamespace);
+                    element.Name = XName.Get(rootName, rootNamespace);
                 }
                 else
                 {
-                    element.Name = XName.Get(this.rootName);
+                    element.Name = XName.Get(rootName);
                 }
             }
 

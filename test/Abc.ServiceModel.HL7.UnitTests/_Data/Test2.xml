@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<t:Test attr="attribute" xmlns:t="http://test">
+  <t:Elem>element</t:Elem>
+</t:Test>

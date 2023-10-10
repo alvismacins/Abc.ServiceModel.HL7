@@ -1,6 +1,5 @@
 ﻿namespace System.ServiceModel.Description
 {
-    using Abc.ServiceModel.HL7;
     using System;
     using System.Reflection;
 
@@ -15,7 +14,7 @@
 
             Type outputType = null;
 #if NET45_OR_GREATER || NETCOREAPP
-            outputType = operationDescription.TaskMethod.ReturnType.GetGenericArguments()[0];
+            outputType = operationDescription.TaskMethod?.ReturnType.GetGenericArguments()[0];
 #endif
 #if NET45_OR_GREATER
             if (outputType == null) {
@@ -94,7 +93,7 @@
                 operationContract = operationDescription.DeclaringContract.Operations[0].Behaviors.Find<T>();
             }
 
-            if (operationContract is null)
+            if (operationContract == null)
             {
                 throw new InvalidOperationException("wrong method definition");
             }

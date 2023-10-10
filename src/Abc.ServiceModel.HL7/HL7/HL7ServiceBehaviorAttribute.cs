@@ -11,7 +11,7 @@ namespace Abc.ServiceModel.HL7
     using System.ServiceModel.Dispatcher;
 
     /// <summary>
-    /// HL7 Service Beahviour.
+    /// HL7 Service behavior.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class HL7ServiceBehaviorAttribute : Attribute, IServiceBehavior

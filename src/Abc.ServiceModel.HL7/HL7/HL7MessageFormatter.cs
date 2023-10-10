@@ -1,15 +1,12 @@
 ﻿namespace Abc.ServiceModel.HL7
 {
+    using Abc.ServiceModel.Protocol.HL7;
     using System;
-    using System.Collections.Generic;
-    using System.Diagnostics.CodeAnalysis;
-    using System.Globalization;
     using System.Runtime.Serialization;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
     using System.ServiceModel.Dispatcher;
-    using Abc.ServiceModel.Protocol.HL7;
-    using System.Linq;
+
     public partial class HL7MessageFormatter : IClientMessageFormatter
     {
         private HL7OperationContractAttribute attribute;

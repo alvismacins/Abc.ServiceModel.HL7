@@ -101,7 +101,6 @@ namespace Abc.IdentityModel.Protocols.WSSecurityPolicy
         /// <param name="bindingParameters">The binding parameters.</param>
         public void AddBindingParameters(OperationDescription operationDescription, BindingParameterCollection bindingParameters)
         {
-            string aaa = "aaa";
         }
 
         /// <summary>
@@ -112,7 +111,6 @@ namespace Abc.IdentityModel.Protocols.WSSecurityPolicy
         /// <param name="bindingParameters">The objects that binding elements require to support the behavior.</param>
         public void AddBindingParameters(ContractDescription contractDescription, ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
         {
-            string aaa = "aaa";
         }
 
         /// <summary>
@@ -142,7 +140,6 @@ namespace Abc.IdentityModel.Protocols.WSSecurityPolicy
         /// <param name="clientRuntime">The client runtime.</param>
         public void ApplyClientBehavior(ContractDescription contractDescription, ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
-            string aaa = "aaa";
         }
 
         /// <summary>
@@ -161,7 +158,6 @@ namespace Abc.IdentityModel.Protocols.WSSecurityPolicy
         /// <param name="dispatchOperation">The dispatch operation.</param>
         public void ApplyDispatchBehavior(OperationDescription operationDescription, DispatchOperation dispatchOperation)
         {
-            string aaa = "aaa";
         }
 
         /// <summary>
@@ -172,7 +168,6 @@ namespace Abc.IdentityModel.Protocols.WSSecurityPolicy
         /// <param name="dispatchRuntime">The dispatch runtime that controls service execution.</param>
         public void ApplyDispatchBehavior(ContractDescription contractDescription, ServiceEndpoint endpoint, DispatchRuntime dispatchRuntime)
         {
-            string aaa = "aaa";
         }
 
         /// <summary>
@@ -428,9 +423,6 @@ namespace Abc.IdentityModel.Protocols.WSSecurityPolicy
         /// <param name="endpoint">            The endpoint to validate. </param>
         public void Validate(ContractDescription contractDescription, ServiceEndpoint endpoint)
         {
-            string aaa = "aaa";
-
-            var tt = endpoint.Name;
         }
 
         /// <summary>

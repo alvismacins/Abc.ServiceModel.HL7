@@ -1,10 +1,10 @@
 ﻿namespace Abc.ServiceModel
 {
     using System;
-    using System.Diagnostics.Contracts;
     using System.Runtime.Serialization;
     using System.Xml;
     using System.Xml.Serialization;
+
     public class XmlSerializerObjectSerializer : XmlObjectSerializer
     {
         private bool isSerializerSetExplicit;
@@ -20,7 +20,10 @@
         /// <param name="type">The type of the instances that are serialized or deserialized.</param>
         public XmlSerializerObjectSerializer(Type type)
         {
-            if (type == null) {  throw new ArgumentNullException("type", "type != null"); }
+            if (type is null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
 
             this.Initialize(type, null, null, null);
         }
@@ -35,7 +38,10 @@
         /// <param name="rootNamespace">The namespace of the XML element that encloses the content to serialize or deserialize.</param>
         public XmlSerializerObjectSerializer(Type type, string rootName, string rootNamespace)
         {
-            if (type == null) {  throw new ArgumentNullException("type", "type != null"); }
+            if (type is null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
 
             this.Initialize(type, rootName, rootNamespace, null);
         }
@@ -51,7 +57,10 @@
         /// <param name="xmlSerializer">The XML serializer.</param>
         public XmlSerializerObjectSerializer(Type type, string rootName, string rootNamespace, XmlSerializer xmlSerializer)
         {
-            if (type == null) {  throw new ArgumentNullException("type", "type != null"); }
+            if (type is null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
 
             this.Initialize(type, rootName, rootNamespace, xmlSerializer);
         }
@@ -65,7 +74,10 @@
         /// </returns>
         public override bool IsStartObject(XmlDictionaryReader reader)
         {
-            if (reader == null) {  throw new ArgumentNullException("reader", "reader != null"); }
+            if (reader is null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
 
             reader.MoveToElement();
 
@@ -87,6 +99,11 @@
         /// </returns>
         public override object ReadObject(XmlDictionaryReader reader, bool verifyObjectName)
         {
+            if (reader is null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
             if (!this.isSerializerSetExplicit)
             {
                 return this.serializer.Deserialize(reader);
@@ -123,7 +140,10 @@
         /// <exception cref="T:System.ServiceModel.QuotaExceededException">the maximum number of objects to serialize has been exceeded. Check the <see cref="P:System.Runtime.Serialization.DataContractSerializer.MaxItemsInObjectGraph"/> property.</exception>
         public override void WriteObject(XmlDictionaryWriter writer, object graph)
         {
-            if (writer == null) {  throw new ArgumentNullException("writer", "writer != null"); }
+            if (writer is null)
+            {
+                throw new ArgumentNullException(nameof(writer));
+            }
 
             if (this.isSerializerSetExplicit)
             {
@@ -163,9 +183,7 @@
 
         private void Initialize(Type type, string rootNameParam, string rootNamespaceParam, XmlSerializer xmlSerializerParam)
         {
-            if (type == null) {  throw new ArgumentNullException("type", "type != null"); }
-
-            this.rootType = type;
+            this.rootType = type ?? throw new ArgumentNullException(nameof(type));
             this.rootName = rootNameParam ?? string.Empty;
             this.rootNamespace = rootNamespaceParam ?? string.Empty;
             this.serializer = xmlSerializerParam;
@@ -181,7 +199,7 @@
                     XmlRootAttribute root = new XmlRootAttribute
                     {
                         ElementName = this.rootName,
-                        Namespace = this.rootNamespace
+                        Namespace = this.rootNamespace,
                     };
 
                     this.serializer = new XmlSerializer(type, root);
