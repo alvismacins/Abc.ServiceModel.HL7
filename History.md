@@ -1,4 +1,8 @@
-﻿V0.2.0.27 (05.06.2017)
+V0.3.0
+Added support of task based methods.
+Added support of .NET CORE
+
+V0.2.0.27 (05.06.2017)
 BUG: Sender and Receiver Attribute using 
 BUG: AddError, AddWarinig, AddInformation sender using
 
