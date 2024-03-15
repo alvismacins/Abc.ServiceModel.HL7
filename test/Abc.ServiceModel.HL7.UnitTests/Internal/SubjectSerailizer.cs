@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Serialization;
-using System.Xml.Linq;
 using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Linq;
 using Xml.Schema.Linq;
 
 namespace Abc.ServiceModel.HL7.UnitTests
@@ -17,30 +15,6 @@ namespace Abc.ServiceModel.HL7.UnitTests
         {
             this.name = name;
         }
-
-        //public SubjectSerializer()
-        //{
-        //    subject = null;
-        //}
-
-
-        //// Xml Serialization Infrastructure
-
-        //public void WriteXml(XmlWriter writer)
-        //{
-        //    subject.WriteTo(writer);
-        //    //writer.WriteString(personName);
-        //}
-
-        //public void ReadXml(XmlReader reader)
-        //{
-        //   // personName = reader.ReadString();
-        //}
-
-        //public XmlSchema GetSchema()
-        //{
-        //    return (null);
-        //}
 
         public override bool IsStartObject(XmlDictionaryReader reader)
         {

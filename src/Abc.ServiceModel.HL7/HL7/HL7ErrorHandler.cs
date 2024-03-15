@@ -1,12 +1,10 @@
-﻿#if NETFRAMEWORK
+﻿#if NETFRAMEWORK || CoreWCF
 
 namespace Abc.ServiceModel.HL7
 {
     using System;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
-    using System.ServiceModel.Channels;
-    using System.ServiceModel.Dispatcher;
     using Abc.ServiceModel.Protocol.HL7;
 
     /// <summary>

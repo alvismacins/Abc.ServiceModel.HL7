@@ -10,7 +10,6 @@ namespace Abc.ServiceModel.HL7
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Runtime.Serialization;
-    using System.ServiceModel;
     using Abc.ServiceModel.Protocol.HL7;
 
     /// <summary>

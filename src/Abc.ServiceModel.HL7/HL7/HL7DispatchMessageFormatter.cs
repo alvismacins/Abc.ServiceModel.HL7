@@ -1,4 +1,4 @@
-﻿#if NETFRAMEWORK
+﻿#if NETFRAMEWORK || CoreWCF
 
 namespace Abc.ServiceModel.HL7
 {
@@ -6,12 +6,8 @@ namespace Abc.ServiceModel.HL7
     using System.Collections.Generic;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
-    using System.Runtime.Serialization;
-    using System.ServiceModel;
-    using System.ServiceModel.Channels;
-    using System.ServiceModel.Dispatcher;
     using Abc.ServiceModel.Protocol.HL7;
-    using System.Linq;
+
     public partial class HL7MessageFormatter : IDispatchMessageFormatter
     {
         /// <summary>
@@ -32,15 +28,9 @@ namespace Abc.ServiceModel.HL7
             var messageHL7 = HL7MessageExtension.ReadHL7Message(message, this.attribute.Interaction);
 
             HL7Request request = messageHL7 as HL7Request;
-
             if (request == null)
             {
                 throw new FormatException("is not request");
-            }
-
-            if (this.attribute == null)
-            {
-                throw new FormatException(string.Format(CultureInfo.InvariantCulture, SrProtocol.IsNotSet, "Attributes"));
             }
 
             this.queryRequest = this.attribute.QueryParameterPayload;
@@ -49,7 +39,7 @@ namespace Abc.ServiceModel.HL7
             {
                 case HL7Request.RequestType.QueryParamRequest:
 
-                    if (request == null || request.QueryControlAct == null)
+                    if (request.QueryControlAct == null)
                     {
                         throw new FormatException(string.Format(CultureInfo.InvariantCulture, SrProtocol.IsNotSet, "request.QueryControlAct"));
                     }
@@ -59,14 +49,14 @@ namespace Abc.ServiceModel.HL7
 
                 case HL7Request.RequestType.MessageRequest:
 
-                    if (request == null || request.ControlAct == null)
+                    if (request.ControlAct == null)
                     {
                         throw new FormatException(string.Format(CultureInfo.InvariantCulture, SrProtocol.IsNotSet, "request.ControlAct"));
                     }
 
                     var param = this.CreateInputSerializer(this.parameterType, HL7Request.RequestType.MessageRequest);
 
-                    if (request != null && request.ControlAct != null && request.ControlAct.Subject != null)
+                    if (request.ControlAct != null && request.ControlAct.Subject != null)
                     {
                         parameters[0] = request.ControlAct.Subject.GetBody(param);
                     }
@@ -75,7 +65,7 @@ namespace Abc.ServiceModel.HL7
 
                 case HL7Request.RequestType.QueryContinuationRequest:
 
-                    if (request == null || request.QueryControlAct == null)
+                    if (request.QueryControlAct == null)
                     {
                         throw new FormatException(string.Format(CultureInfo.InvariantCulture, SrProtocol.IsNotSet, "request.QueryControlAct"));
                     }
@@ -85,7 +75,7 @@ namespace Abc.ServiceModel.HL7
 
                 default:
 
-                    if (request == null || request.ControlAct == null)
+                    if (request.ControlAct == null)
                     {
                         throw new FormatException(string.Format(CultureInfo.InvariantCulture, SrProtocol.IsNotSet, "request.ControlAct"));
                     }

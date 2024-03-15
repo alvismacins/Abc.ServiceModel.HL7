@@ -4,9 +4,6 @@
     using System.Globalization;
     using System.Reflection;
     using System.Runtime.Serialization;
-    using System.ServiceModel.Channels;
-    using System.ServiceModel.Description;
-    using System.ServiceModel.Dispatcher;
     using Abc.ServiceModel.Protocol.HL7;
 
     /// <summary>
@@ -390,7 +387,7 @@
                     attribute.Interaction = dispatchOperation.Action.Substring(HL7Constants.Namespace.Length + 1);
                     this.Template = Helper.GetUrnType(attribute.Interaction, attribute.Version);
                 }
-#if !NETCOREAPP
+#if NETFRAMEWORK || CoreWCF
                 if (dispatchOperation.ReplyAction != null)
                 {
                     attribute.ReplyInteraction = dispatchOperation.ReplyAction.Substring(HL7Constants.Namespace.Length + 1);

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />  
+
+  <PropertyGroup Condition=" '$(MSBuildProjectName)' == 'Abc.ServiceModel.HL7'">
+     <BaseIntermediateOutputPath>obj\ServiceModel\</BaseIntermediateOutputPath>
+     <OutputPath>bin\ServiceModel\</OutputPath>
+    <PackageTags>$(PackageTags);ServiceModel</PackageTags>
+  </PropertyGroup>
+   <PropertyGroup Condition=" '$(MSBuildProjectName)' == 'Abc.CoreWCF.HL7'">
+     <BaseIntermediateOutputPath>obj\CoreWCF\</BaseIntermediateOutputPath>
+     <OutputPath>bin\CoreWCF\</OutputPath>
+     <PackageTags>$(PackageTags);CoreWCF</PackageTags>
+   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="stylecop.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="..\stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.NetAnalyzers" Version="8.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="9.21.0.86780">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.406">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <!--<PackageReference Include="SourceLink.Create.CommandLine" Version="2.8.0" PrivateAssets="All" /> -->
+  </ItemGroup>
+
+
+</Project>

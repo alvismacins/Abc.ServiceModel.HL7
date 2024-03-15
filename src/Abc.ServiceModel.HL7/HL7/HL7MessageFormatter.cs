@@ -1,13 +1,22 @@
-﻿namespace Abc.ServiceModel.HL7
+﻿// ----------------------------------------------------------------------------
+// <copyright file="HL7MessageCreator.cs" company="PlaceholderCompany">
+// Copyright (c) PlaceholderCompany. All rights reserved.
+// </copyright>
+// ----------------------------------------------------------------------------
+
+namespace Abc.ServiceModel.HL7
 {
     using Abc.ServiceModel.Protocol.HL7;
     using System;
+    using System.Collections.Generic;
+    using System.Globalization;
     using System.Runtime.Serialization;
-    using System.ServiceModel;
-    using System.ServiceModel.Channels;
-    using System.ServiceModel.Dispatcher;
+    using System.Threading.Tasks;
 
-    public partial class HL7MessageFormatter : IClientMessageFormatter
+    /// <summary>
+    /// General MessageCreator
+    /// </summary>
+    public partial class HL7MessageFormatter
     {
         private HL7OperationContractAttribute attribute;
         private Type inputSerializerType;
@@ -27,7 +36,7 @@
         /// <param name="outputSerializerType">Type of the output serializer.</param>
         internal HL7MessageFormatter(HL7OperationContractAttribute attribute, Type parameterType, Type outputParameterType, Type inputSerializerType, Type outputSerializerType)
         {
-            if (attribute == null) {  throw new ArgumentNullException("attribute", "attribute != null"); }
+            if (attribute == null) { throw new ArgumentNullException("attribute", "attribute != null"); }
 
             this.parameterType = parameterType;
             this.outputParameterType = outputParameterType;
@@ -52,158 +61,192 @@
             }
         }
 
-        /// <summary>
-        /// Converts a message into a return value and out parameters that are passed back to the calling operation.
-        /// </summary>
-        /// <param name="message">The inbound message.</param>
-        /// <param name="parameters">Any out values.</param>
-        /// <returns>
-        /// The return value of the operation.
-        /// </returns>
-        public object DeserializeReply(Message message, object[] parameters)
+        private Message CreateMessageRequest(object body, string interactionId, string deviceSender, string deviceReceiver, string actionCode, string reasonCode, HL7Request.RequestType requestType, MessageVersion messageVersion)
         {
-            if (message == null) {  throw new ArgumentNullException("message", "message != null"); }
-
-            object body = null;
-
-            // Set operation Context
-            if (!message.IsFault)
-            {
-                string interactionId = this.attribute.ReplyInteraction;
-
-                // string templateId = this.attribute.ReplyTemplate;
-                HL7TransmissionWrapper messageHl7 = null;
-
-                if (!string.Equals(interactionId, "*", StringComparison.OrdinalIgnoreCase))
-                {
-                    messageHl7 = message.ReadHL7Message(interactionId);
-                }
-                else
-                {
-                    var mess = message.CreateBufferedCopy(int.MaxValue);
-                    messageHl7 = mess.CreateMessage().ReadHL7Message();
-
-                    return mess.CreateMessage();
-                }
-
-                // Generate HL7 Fault Exception
-                if (messageHl7.Acknowledgement != null)
-                {
-                    if (messageHl7.Acknowledgement.AcknowledgementDataType != HL7AcknowledgementType.AcceptAcknowledgementCommitAccept
-                        && messageHl7.Acknowledgement.AcknowledgementDataType != HL7AcknowledgementType.ApplicationAcknowledgementAccept
-                        && messageHl7.Acknowledgement.AcknowledgementDetails != null && messageHl7.Acknowledgement.AcknowledgementDetails.Count > 0)
-                    {
-                        throw new HL7FaultException(messageHl7.Acknowledgement.AcknowledgementDetails, null);
-                    }
-                }
-
-                if (this.attribute != null && !this.attribute.AcknowledgementResponse && this.parameterType != typeof(void) && messageHl7 != null && messageHl7.ControlAct != null && messageHl7.ControlAct.Subject != null)
-                {
-                    body = messageHl7.ControlAct.Subject.GetBody(this.CreateInputSerializer(this.parameterType, HL7Request.RequestType.MessageRequest));
-                }
-
-                var operationContext = new HL7OperationContext();
-                operationContext.OperationContract = this.attribute;
-
-                if (OperationContext.Current != null)
-                {
-                    OperationContext.Current.Extensions.Add(operationContext);
-
-                    if (messageHl7 != null)
-                    {
-                        operationContext.MessageId = messageHl7.IdentificationId.Extension;
-                        operationContext.Sender = messageHl7.Sender;
-                        operationContext.Receiver = messageHl7.Receiver;
-                        operationContext.TargetMessage = messageHl7.Acknowledgement.TargetMessage.Extension;
-                        operationContext.CreationTime = messageHl7.CreationTime;
-                        operationContext.SetAttentionLine = messageHl7.AttentionLineCollection;
-
-                        if (messageHl7.AttentionLineCollection != null)
-                        {
-                            operationContext.GetAttentionLine = messageHl7.AttentionLineCollection;
-                        }
-
-                        if (messageHl7.ControlAct != null && messageHl7.ControlAct.ReasonCodes.Count > 0)
-                        {
-                            foreach (var item in messageHl7.ControlAct.ReasonCodes)
-                            {
-                                if (item != null && OId.Compare(item.CodeSystem, HL7Constants.OIds.ActionCodeId) == 0)
-                                {
-                                    operationContext.ActionCode = item;
-                                }
-
-                                if (item != null && OId.Compare(item.CodeSystem, HL7Constants.OIds.ReasonCodeId) == 0)
-                                {
-                                    operationContext.ReasonCode = item;
-                                }
-                            }
-
-                            HL7QueryControlAcknowledgement queryControlAck = messageHl7.ControlAct as HL7QueryControlAcknowledgement;
-                            if (queryControlAck != null)
-                            {
-                                operationContext.QueryAcknowledgement = queryControlAck.QueryAcknowledgement;
-                                operationContext.GetOverseers = queryControlAck.Overseer;
-                                operationContext.GetDataEnterers = queryControlAck.DataEnterers;
-                            }
-
-                            HL7MessageControlAct messageControlAct = messageHl7.ControlAct as HL7MessageControlAct;
-                            if (messageControlAct != null)
-                            {
-                                operationContext.GetOverseers = messageControlAct.Overseer;
-                                operationContext.GetDataEnterers = messageControlAct.DataEnterers;
-                            }
-                        }
-
-                        if (messageHl7.Acknowledgement != null)
-                        {
-                            operationContext.AcknowledgementType = messageHl7.Acknowledgement.AcknowledgementDataType;
-
-                            if (messageHl7.Acknowledgement.AcknowledgementDetails != null)
-                            {
-                                operationContext.AcknowledgementDetail = messageHl7.Acknowledgement.AcknowledgementDetails;
-                            }
-                        }
-                    }
-                }
-            }
-
-            return body;
+            return this.CreateMessageRequest(body, interactionId, deviceSender, deviceReceiver, actionCode, reasonCode, null, null, null, requestType, messageVersion);
         }
 
-        /// <summary>
-        /// Converts an <see cref="T:System.Object"/> array into an outbound <see cref="T:System.ServiceModel.Channels.Message"/>.
-        /// </summary>
-        /// <param name="messageVersion">The version of the SOAP message to use.</param>
-        /// <param name="parameters">The parameters passed to the  client operation.</param>
-        /// <returns>
-        /// The SOAP message sent to the service operation.
-        /// </returns>
-        public Message SerializeRequest(MessageVersion messageVersion, object[] parameters)
+        private Message CreateMessageRequest(object body, string interactionId, string deviceSender, string deviceReceiver, string actionCode, string reasonCode, string controlActDescription, string priorityCode, string languageCode, HL7Request.RequestType requestType, MessageVersion messageVersion)
         {
-            if (parameters == null) {  throw new ArgumentNullException("parameters", "parameters != null"); }
-            if (!(parameters.Length > 0)) {  throw new ArgumentException("parameters", "parameters.Length > 0"); }
+            // if (string.IsNullOrEmpty(actionCode))
+            // {
+            //    throw new FormatException(SrProtocol.ActionCodeIsNotSet);
+            // }
 
-            string interactionId = this.attribute.Interaction;
+            // if (string.IsNullOrEmpty(reasonCode))
+            // {
+            //    throw new FormatException(SrProtocol.ResonCodeIsNotSet);
+            // }
+            HL7ClassificatorId languageCodeClasif = null;
 
-            // UrnType templateId = new UrnType(this.attribute.Template);
-            string deviceSender = this.attribute.Sender;
-            string deviceReceiver = this.attribute.Receiver;
-            object body = parameters[0];
-            this.queryRequest = this.attribute.QueryParameterPayload;
-
-            var operationContext = HL7OperationContext.Current;
-
-            if (this.attribute.GetsActionCode == null && operationContext != null && operationContext.ActionCode != null)
+            if (!string.IsNullOrEmpty(languageCode))
             {
-                this.attribute.GetsActionCode = operationContext.ActionCode.Code;
+                languageCodeClasif = new HL7ClassificatorId(languageCode, HL7Constants.OIds.LanguageOId);
             }
 
-            if (this.attribute.GetsReasonCode == null && operationContext != null && operationContext.ReasonCode != null)
+            HL7ClassificatorId priorityCodeClassif = null;
+
+            if (!string.IsNullOrEmpty(priorityCode))
             {
-                this.attribute.GetsReasonCode = operationContext.ReasonCode.Code;
+                priorityCodeClassif = new HL7ClassificatorId(priorityCode, HL7Constants.OIds.LanguageOId);
             }
 
-            return this.CreateMessageRequest(body, interactionId, deviceSender, deviceReceiver, this.attribute.GetsActionCode, this.attribute.GetsReasonCode, this.attribute.ControlActDescription, this.attribute.PriorityCode, this.attribute.LanguageCode, this.queryRequest, messageVersion);
+            ICollection<HL7DataEnterer> dataEnterers = null;
+            ICollection<HL7Overseer> overseers = null;
+            if (HL7OperationContext.Current != null)
+            {
+                dataEnterers = HL7OperationContext.Current.SetDataEnterers;
+                overseers = HL7OperationContext.Current.SetOverseers;
+            }
+
+            HL7ControlAct controlAct;
+
+            switch (requestType)
+            {
+                case HL7Request.RequestType.MessageRequest:
+                    controlAct = new HL7MessageControlAct(overseers, dataEnterers, null, null, null, controlActDescription, priorityCodeClassif, actionCode, reasonCode, languageCodeClasif, HL7Subject.CreateSubject(body, this.CreateOutputSerializer(body.GetType(), HL7Request.RequestType.MessageRequest)));
+                    break;
+
+                case HL7Request.RequestType.QueryParamRequest:
+                    controlAct = new HL7QueryControlAcknowledgement(overseers, dataEnterers, null, null, null, controlActDescription, null, priorityCodeClassif, actionCode, reasonCode, languageCodeClasif, HL7QueryByParameterPayload.CreateQueryByParameterPayload(body, this.CreateOutputSerializer(body.GetType(), requestType)));
+                    break;
+
+                case HL7Request.RequestType.QueryContinuationRequest:
+                    controlAct = new HL7QueryControlAcknowledgement(overseers, dataEnterers, null, null, null, controlActDescription, null, priorityCodeClassif, actionCode, reasonCode, languageCodeClasif, HL7QueryContinuation.CreateQueryContinuation(body, this.CreateOutputSerializer(body.GetType(), requestType)));
+                    break;
+
+                default:
+                    controlAct = new HL7MessageControlAct(overseers, dataEnterers, null, null, null, controlActDescription, priorityCodeClassif, actionCode, reasonCode, languageCodeClasif, HL7Subject.CreateSubject(body, this.CreateOutputSerializer(body.GetType(), HL7Request.RequestType.MessageRequest)));
+                    break;
+            }
+
+            HL7Request request = new HL7Request(interactionId, this.version, deviceSender, deviceReceiver, controlAct);
+
+            // if (!string.IsNullOrEmpty(this.attribute.ReplyTo))
+            // {
+            //    Uri replyTo = new Uri(this.attribute.ReplyTo);
+            //    return HL7MessageExtension.CreateHL7Message(messageVersion, interactionId, request, replyTo);
+            // }
+            return HL7MessageExtension.CreateHL7Message(messageVersion, interactionId, request);
+        }
+
+        private HL7TransmissionWrapper CreateResponse(HL7OperationContext operationContext, string interactionId, HL7Device receiver, HL7Device sender, string actionCode, string reasonCode, HL7Request.RequestType requestType, object result)
+        {
+            return this.CreateResponse(operationContext, interactionId, receiver, sender, actionCode, reasonCode, null, null, null, requestType, result);
+        }
+
+        private HL7TransmissionWrapper CreateResponse(HL7OperationContext operationContext, string interactionId, HL7Device receiver, HL7Device sender, string actionCode, string reasonCode, string controlActDescription, string priorityCode, string languageCode, HL7Request.RequestType requestType, object result)
+        {
+            ICollection<HL7DataEnterer> dataEnterers = null;
+            ICollection<HL7Overseer> overseers = null;
+            HL7AcknowledgementType? acknowledgementType = null;
+            ICollection<HL7AttentionLine> attentionLine = null;
+            if (HL7OperationContext.Current != null)
+            {
+                dataEnterers = HL7OperationContext.Current.SetDataEnterers;
+                overseers = HL7OperationContext.Current.SetOverseers;
+                acknowledgementType = HL7OperationContext.Current.SetAcknowledgementTypeInResponse;
+                attentionLine = HL7OperationContext.Current.SetAttentionLine;
+            }
+
+            if (this.attribute.AcknowledgementResponse || this.outputParameterType == typeof(void)
+#if NET45_OR_GREATER
+                || this.outputParameterType == typeof(Task)
+#endif
+                )
+            {
+                /*
+                return new HL7AcknowledgementResponse(interactionId, this.version, receiver.Id.Extension, sender.Id.Extension, new HL7Acknowledgement(operationContext.MessageId, acknowledgementType != null && acknowledgementType.HasValue ? acknowledgementType.Value : HL7AcknowledgementType.AcceptAcknowledgementCommitAccept, operationContext.AcknowledgementDetail));*/
+
+                return new HL7AcknowledgementResponse(new HL7TemplateId(Helper.GetUrnType(interactionId, this.version)), new HL7IdentificationId(), version, DateTime.Now, new HL7InteractionId(interactionId), HL7ProcessingCode.Production, HL7ProcessingModeCode.OperationData, HL7AcceptAcknowledgementCode.Always, new HL7Device(sender.Id.Extension, HL7Constants.AttributesValue.Sender), new HL7Device(receiver.Id.Extension, HL7Constants.AttributesValue.Receiver), attentionLine, new HL7Acknowledgement(operationContext.MessageId, acknowledgementType != null && acknowledgementType.HasValue ? acknowledgementType.Value : HL7AcknowledgementType.AcceptAcknowledgementCommitAccept, operationContext.AcknowledgementDetail));
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(actionCode))
+                {
+                    throw new FormatException(SrProtocol.ActionCodeIsNotSet);
+                }
+
+                if (string.IsNullOrEmpty(reasonCode))
+                {
+                    throw new FormatException(SrProtocol.ResonCodeIsNotSet);
+                }
+
+                HL7ClassificatorId languageCodeClasif = null;
+
+                if (!string.IsNullOrEmpty(languageCode))
+                {
+                    languageCodeClasif = new HL7ClassificatorId(languageCode, HL7Constants.OIds.LanguageOId);
+                }
+
+                HL7ClassificatorId priorityCodeClassif = null;
+
+                if (!string.IsNullOrEmpty(priorityCode))
+                {
+                    priorityCodeClassif = new HL7ClassificatorId(priorityCode, HL7Constants.OIds.LanguageOId);
+                }
+
+
+
+                HL7ControlAct controlAct;
+
+                switch (requestType)
+                {
+                    case HL7Request.RequestType.MessageRequest:
+
+                        if (result == null)
+                        {
+                            controlAct = new HL7MessageControlAct(overseers, dataEnterers, null, null, null, controlActDescription, priorityCodeClassif, actionCode, reasonCode, languageCodeClasif, null);
+                        }
+                        else
+                        {
+                            controlAct = new HL7MessageControlAct(overseers, dataEnterers, null, null, null, controlActDescription, priorityCodeClassif, actionCode, reasonCode, languageCodeClasif, HL7Subject.CreateSubject(result, this.CreateOutputSerializer(result.GetType(), HL7Request.RequestType.MessageRequest)));
+                        }
+
+                    // return new HL7ApplicationResponse(interactionId, this.version, receiver.Id.Extension, sender.Id.Extension, controlAct, attentionLine, new HL7Acknowledgement(operationContext.MessageId, acknowledgementType != null && acknowledgementType.HasValue ? acknowledgementType.Value : HL7AcknowledgementType.ApplicationAcknowledgementAccept, operationContext.AcknowledgementDetail)); // TODO: constructor with device
+                    return new HL7ApplicationResponse(interactionId, this.version, sender.Id.Extension, receiver.Id.Extension, controlAct, attentionLine, new HL7Acknowledgement(operationContext.MessageId, acknowledgementType != null && acknowledgementType.HasValue ? acknowledgementType.Value : HL7AcknowledgementType.ApplicationAcknowledgementAccept, operationContext.AcknowledgementDetail)); // TODO: constructor with device
+
+                    case HL7Request.RequestType.QueryParamRequest:
+
+                        if (result == null)
+                        {
+                            controlAct = new HL7QueryControlAcknowledgement(overseers, dataEnterers, null, null, null, controlActDescription, DateTime.Now, priorityCodeClassif, actionCode, reasonCode, languageCodeClasif, operationContext.QueryAcknowledgement);
+                        }
+                        else
+                        {
+                            controlAct = new HL7QueryControlAcknowledgement(overseers, dataEnterers, null, null, null, controlActDescription, DateTime.Now, priorityCodeClassif, actionCode, reasonCode, languageCodeClasif, HL7Subject.CreateSubject(result, this.CreateOutputSerializer(result.GetType(), HL7Request.RequestType.MessageRequest)), operationContext.QueryAcknowledgement);
+                        }
+
+                    //     return new HL7ApplicationResponse(interactionId, this.version, receiver.Id.Extension, sender.Id.Extension, controlAct, attentionLine, new HL7Acknowledgement(operationContext.MessageId, acknowledgementType != null && acknowledgementType.HasValue ? acknowledgementType.Value : HL7AcknowledgementType.ApplicationAcknowledgementAccept, operationContext.AcknowledgementDetail)); // TODO: constructor with device
+
+                        return new HL7ApplicationResponse(interactionId, this.version, sender.Id.Extension, receiver.Id.Extension, controlAct, attentionLine, new HL7Acknowledgement(operationContext.MessageId, acknowledgementType != null && acknowledgementType.HasValue ? acknowledgementType.Value : HL7AcknowledgementType.ApplicationAcknowledgementAccept, operationContext.AcknowledgementDetail));
+
+                    case HL7Request.RequestType.QueryContinuationRequest:
+
+                        if (result == null)
+                        {
+                            controlAct = new HL7QueryControlAcknowledgement(overseers, dataEnterers, null, null, null, controlActDescription, DateTime.Now, priorityCodeClassif, actionCode, reasonCode, languageCodeClasif, operationContext.QueryAcknowledgement);
+                        }
+                        else
+                        {
+                            controlAct = new HL7QueryControlAcknowledgement(overseers, dataEnterers, null, null, null, controlActDescription, DateTime.Now, priorityCodeClassif, actionCode, reasonCode, languageCodeClasif, HL7Subject.CreateSubject(result, this.CreateOutputSerializer(result.GetType(), HL7Request.RequestType.MessageRequest)), operationContext.QueryAcknowledgement);
+                        }
+
+                        //   return new HL7ApplicationResponse(interactionId, this.version, receiver.Id.Extension, sender.Id.Extension, controlAct, attentionLine, new HL7Acknowledgement(operationContext.MessageId, acknowledgementType != null && acknowledgementType.HasValue ? acknowledgementType.Value : HL7AcknowledgementType.ApplicationAcknowledgementAccept, operationContext.AcknowledgementDetail)); // TODO: constructor with device
+                        return new HL7ApplicationResponse(interactionId, this.version, sender.Id.Extension, receiver.Id.Extension, controlAct, attentionLine, new HL7Acknowledgement(operationContext.MessageId, acknowledgementType != null && acknowledgementType.HasValue ? acknowledgementType.Value : HL7AcknowledgementType.ApplicationAcknowledgementAccept, operationContext.AcknowledgementDetail));
+
+                    default:
+                        if (result == null)
+                        {
+                            throw new ArgumentException(string.Format(CultureInfo.InvariantCulture, SrProtocol.IsNotSet, "return parameter"));
+                        }
+
+                        controlAct = new HL7MessageControlAct(overseers, dataEnterers, null, null, null, controlActDescription, priorityCodeClassif, actionCode, reasonCode, languageCodeClasif, HL7Subject.CreateSubject(result, this.CreateOutputSerializer(result.GetType(), HL7Request.RequestType.MessageRequest)));
+
+                        // return new HL7ApplicationResponse(interactionId, this.version, receiver.Id.Extension, sender.Id.Extension, controlAct, attentionLine, new HL7Acknowledgement(operationContext.MessageId, acknowledgementType != null && acknowledgementType.HasValue ? acknowledgementType.Value : HL7AcknowledgementType.ApplicationAcknowledgementAccept, operationContext.AcknowledgementDetail)); // TODO: constructor with device
+                        return new HL7ApplicationResponse(interactionId, this.version, sender.Id.Extension, receiver.Id.Extension, controlAct, attentionLine, new HL7Acknowledgement(operationContext.MessageId, acknowledgementType != null && acknowledgementType.HasValue ? acknowledgementType.Value : HL7AcknowledgementType.ApplicationAcknowledgementAccept, operationContext.AcknowledgementDetail)); // TODO: constructor with device
+                }
+            }
         }
 
         private static XmlObjectSerializer CreateSerializer(Type serializerType, Type type)
@@ -236,19 +279,6 @@
             return HL7QueryByParameterPayloadSerializerDefaults.CreateSerializer(type);
         }
 
-        /*
-        [System.Obsolete("obsolte", true)]
-        private XmlObjectSerializer CreateOutputSerializer(Type type)
-        {
-            return CreateSerializer(this.outputSerializerType, type);
-        }
-        */
-
-        // [System.Obsolete("obsolte", true)]
-        // private XmlObjectSerializer CreateInputSerializer(Type type)
-        // {
-        //    return CreateSerializer(this.inputSerializerType, type);
-        // }
         private XmlObjectSerializer CreateInputSerializer(Type type, HL7Request.RequestType subject)
         {
             switch (subject)

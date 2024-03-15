@@ -6,7 +6,6 @@
 
 namespace Abc.ServiceModel.HL7
 {
-    using System.ServiceModel.Channels;
     using System.Xml;
     using Abc.ServiceModel.Protocol.HL7;
 

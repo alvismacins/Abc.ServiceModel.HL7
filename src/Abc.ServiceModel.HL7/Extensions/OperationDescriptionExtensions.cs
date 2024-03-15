@@ -1,4 +1,8 @@
-﻿namespace System.ServiceModel.Description
+﻿#if CoreWCF
+namespace CoreWCF.Description
+#else
+namespace System.ServiceModel.Description
+#endif
 {
     using System;
     using System.Reflection;
@@ -79,6 +83,7 @@
         }
 
         public static T GetOperationContract<T>(this OperationDescription operationDescription)
+            where T : IOperationBehavior
         {
             if (operationDescription is null)
             {
@@ -90,12 +95,21 @@
                 && operationDescription.DeclaringContract.Operations != null
                 && operationDescription.DeclaringContract.Operations.Count > 0)
             {
-                operationContract = operationDescription.DeclaringContract.Operations[0].Behaviors.Find<T>();
-            }
+#if CoreWCF
+                // Behaviors as internal property
+                if (!operationDescription.DeclaringContract.Operations[0].OperationBehaviors.TryGetValue(typeof(T), out var oc))
+                {
+                    throw new InvalidOperationException("wrong method definition");
+                }
 
-            if (operationContract == null)
-            {
-                throw new InvalidOperationException("wrong method definition");
+                operationContract = (T)oc;
+#else
+                operationContract = operationDescription.DeclaringContract.Operations[0].Behaviors.Find<T>();
+                if (object.Equals(operationContract, default(T)))
+                {
+                    throw new InvalidOperationException("wrong method definition");
+                }
+#endif
             }
 
             return operationContract;

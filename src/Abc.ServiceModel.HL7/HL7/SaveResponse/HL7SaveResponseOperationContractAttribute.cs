@@ -1,12 +1,8 @@
 ﻿namespace Abc.ServiceModel.HL7
 {
     using System;
-    using System.Diagnostics.Contracts;
     using System.Reflection;
     using System.Runtime.Serialization;
-    using System.ServiceModel.Channels;
-    using System.ServiceModel.Description;
-    using System.ServiceModel.Dispatcher;
     using Abc.ServiceModel.Protocol.HL7;
 
     /// <summary>
@@ -27,7 +23,7 @@
         /// Initializes a new instance of the <see cref="HL7SaveResponseOperationContractAttribute"/> class.
         /// </summary>
         /// <param name="version">The version.</param>
-        public HL7SaveResponseOperationContractAttribute(Abc.ServiceModel.Protocol.HL7.HL7Constants.Versions.HL7Version version)
+        public HL7SaveResponseOperationContractAttribute(HL7Constants.Versions.HL7Version version)
         {
             this.Version = version;
         }
@@ -85,7 +81,7 @@
         /// <value>
         /// The version.
         /// </value>
-        public Abc.ServiceModel.Protocol.HL7.HL7Constants.Versions.HL7Version Version { get; set; }
+        public HL7Constants.Versions.HL7Version Version { get; set; }
 
         /// <summary>
         /// Gets or sets the interaction.

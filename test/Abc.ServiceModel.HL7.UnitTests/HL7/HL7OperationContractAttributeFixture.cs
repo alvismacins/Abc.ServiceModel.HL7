@@ -1,4 +1,5 @@
 ﻿using Abc.ServiceModel.Protocol.HL7;
+using FluentAssertions;
 using NUnit.Framework;
 using System;
 using System.ServiceModel;
@@ -68,11 +69,11 @@ namespace Abc.ServiceModel.HL7.UnitTests
                 host.Open();
 
                 var hl7Operation = host.Description.Endpoints[0].Contract.Operations[0].Behaviors.Find<HL7OperationContractAttribute>();
-                Assert.IsNotNull(hl7Operation);
-                Assert.AreEqual("Receiver", hl7Operation.Receiver);
-                Assert.AreEqual("Sender", hl7Operation.Sender);
-                Assert.AreEqual(hl7Operation.Template, Helper.GetUrnType(inName, HL7Constants.Versions.HL7Version.HL72011).ToString());
-                Assert.AreEqual(hl7Operation.ReplyTemplate, Helper.GetUrnType(outName, HL7Constants.Versions.HL7Version.HL72011).ToString());
+                hl7Operation.Should().NotBeNull();
+                hl7Operation.Receiver.Should().Be("Receiver");
+                hl7Operation.Sender.Should().Be("Sender");
+                hl7Operation.Template.Should().Be(Helper.GetUrnType(inName, HL7Constants.Versions.HL7Version.HL72011).ToString());
+                hl7Operation.ReplyTemplate.Should().Be(Helper.GetUrnType(outName, HL7Constants.Versions.HL7Version.HL72011).ToString());
             }
         }
 

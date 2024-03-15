@@ -1,11 +1,9 @@
-﻿namespace Abc.ServiceModel.HL7.UnitTests
-{
-    using System;
-    using System.Runtime.Serialization;
-    using System.Xml;
-    using System.Xml.Linq;
-    using Xml.Schema.Linq;
+﻿using System.Xml;
+using System.Xml.Linq;
+using Xml.Schema.Linq;
 
+namespace System.Runtime.Serialization
+{
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
