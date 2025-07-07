@@ -1,10 +1,11 @@
-﻿#if CoreWCF
+#if CoreWCF
 namespace CoreWCF.Description
 #else
 namespace System.ServiceModel.Description
 #endif
 {
     using System;
+    using System.Linq;
     using System.Reflection;
 
     internal static class OperationDescriptionExtensions
@@ -18,7 +19,17 @@ namespace System.ServiceModel.Description
 
             Type outputType = null;
 #if NET45_OR_GREATER || NETCOREAPP
-            outputType = operationDescription.TaskMethod?.ReturnType.GetGenericArguments()[0];
+            // outputType = operationDescription.TaskMethod?.ReturnType.GetGenericArguments()[0];
+            if (operationDescription.TaskMethod != null &&
+                            operationDescription.TaskMethod.ReturnType.GetGenericArguments().Any())
+            {
+                outputType = operationDescription.TaskMethod?.ReturnType.GetGenericArguments()[0];
+            }
+            else
+            {
+                outputType = operationDescription.TaskMethod?.ReturnType;
+            }
+
 #endif
 #if NET45_OR_GREATER
             if (outputType == null) {
