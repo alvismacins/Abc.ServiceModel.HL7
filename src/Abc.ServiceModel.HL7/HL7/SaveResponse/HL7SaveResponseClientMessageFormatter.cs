@@ -43,7 +43,11 @@
 
                 if (this.attribute != null && !this.attribute.AcknowledgementResponse && this.parameterType != typeof(void))
                 {
-                    body = messageHl7.ControlAct.Subject.GetBody(this.CreateInputSerializer(this.parameterType, HL7Request.RequestType.MessageRequest));
+                    body = messageHl7.ControlAct.Subject.GetBody(this.CreateInputSerializer(
+                        this.parameterType,
+                        HL7Request.RequestType.MessageRequest,
+                        rootName: messageHl7.ControlAct.Subject.SubjectElementName,
+                        rootNamespace: HL7Constants.Namespace));
                 }
 
                 var operationContext = new HL7OperationContext();

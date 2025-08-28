@@ -1,5 +1,6 @@
 ﻿namespace Abc.ServiceModel.Protocol.HL7
 {
+    using Abc.ServiceModel.HL7.Extensions;
     using System;
     using System.Diagnostics.Contracts;
     using System.Runtime.Serialization;
@@ -44,7 +45,7 @@
         {
             if (body == null) {  throw new ArgumentNullException("body", "body != null"); }
 
-            return CreateQueryByParameterPayload(body, HL7QueryByParameterPayloadSerializerDefaults.CreateSerializer(body.GetType()));
+            return CreateQueryByParameterPayload(body, HL7QueryByParameterPayloadSerializerDefaults.CreateSerializer(body.GetType(), rootName: null, rootNamespace: null));
         }
 
         /// <summary>
@@ -78,6 +79,14 @@
         }
 
         /// <summary>
+        /// Gets the name of the QueryByParameterPayload element.
+        /// </summary>
+        /// <value>
+        /// The name of the QueryByParameterPayload element.
+        /// </value>
+        internal string QueryByParameterPayloadElementName { get; private set; }
+
+        /// <summary>
         /// Creates the reader.
         /// </summary>
         /// <returns>The XmlReader</returns>
@@ -93,7 +102,7 @@
         /// <returns>An object of type T that contains the body of this message.</returns>
         public T GetBody<T>()
         {
-            return (T)this.GetBody(HL7QueryByParameterPayloadSerializerDefaults.CreateSerializer(typeof(T)));
+            return (T)this.GetBody(HL7QueryByParameterPayloadSerializerDefaults.CreateSerializer(typeof(T), rootName: this.QueryByParameterPayloadElementName, rootNamespace: HL7Constants.Namespace));
         }
 
         /// <summary>
@@ -119,6 +128,7 @@
         /// <param name="writer">The writer.</param>
         public void WriteQueryByParameterPayload(XmlWriter writer)
         {
+            this.QueryByParameterPayloadElementName = null;
             if (this.data != null)
             {
                 this.serializer.WriteObject(writer, this.data);
@@ -136,6 +146,7 @@
         /// <param name="writer">The writer.</param>
         public virtual void WriteQueryByParameterPayload(XmlDictionaryWriter writer)
         {
+            this.QueryByParameterPayloadElementName = null;
             if (this.data != null)
             {
                 this.serializer.WriteObject(writer, this.data);
@@ -164,7 +175,28 @@
                 reader.ReadStartElement(HL7Constants.Elements.QueryByParameterPayload, HL7Constants.Namespace);
             }
 
+            var prefix = reader.Prefix;
             this.xmlElement = (XElement)XElement.ReadFrom(reader);
+            this.QueryByParameterPayloadElementName = this.xmlElement.GetElementNameWithPrefix();
+
+            if (this.QueryByParameterPayloadElementName == null)
+            {
+                return;
+            }
+
+            //var containsAttributesFromThisNamespace = this.xmlElement.ContainsAttributesFromThisNamespace(prefix: prefix);
+            //this.QueryByParameterPayloadElementName += containsAttributesFromThisNamespace
+            //    ? ":HasAttrWithPrefix:1"
+            //    : ":HasAttrWithPrefix:0";
+
+            // Add missing hl7 namespace declaration if not present
+            if (!string.IsNullOrEmpty(prefix) &&
+                this.xmlElement.GetNamespaceOfPrefix(prefix) == null /* &&
+                containsAttributesFromThisNamespace */
+                )
+            {
+                this.xmlElement.Add(new XAttribute(XNamespace.Xmlns + prefix, HL7Constants.Namespace));
+            }
         }
     }
 }

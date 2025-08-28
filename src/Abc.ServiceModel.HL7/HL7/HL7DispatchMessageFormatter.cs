@@ -26,7 +26,7 @@ namespace Abc.ServiceModel.HL7
             operationContext.OperationContract = this.attribute;
             OperationContext.Current.Extensions.Add(operationContext);
             var messageHL7 = HL7MessageExtension.ReadHL7Message(message, this.attribute.Interaction);
-
+            
             HL7Request request = messageHL7 as HL7Request;
             if (request == null)
             {
@@ -44,7 +44,12 @@ namespace Abc.ServiceModel.HL7
                         throw new FormatException(string.Format(CultureInfo.InvariantCulture, SrProtocol.IsNotSet, "request.QueryControlAct"));
                     }
 
-                    parameters[0] = request.QueryControlAct.QueryByParameterPayload.GetBody(this.CreateInputSerializer(this.parameterType, HL7Request.RequestType.QueryParamRequest));
+                    parameters[0] = request.QueryControlAct.QueryByParameterPayload.GetBody(
+                        this.CreateInputSerializer(
+                            this.parameterType,
+                            HL7Request.RequestType.QueryParamRequest,
+                            rootName: request.QueryControlAct.QueryByParameterPayload.QueryByParameterPayloadElementName,
+                            rootNamespace: HL7Constants.Namespace));
                     break;
 
                 case HL7Request.RequestType.MessageRequest:
@@ -53,8 +58,12 @@ namespace Abc.ServiceModel.HL7
                     {
                         throw new FormatException(string.Format(CultureInfo.InvariantCulture, SrProtocol.IsNotSet, "request.ControlAct"));
                     }
-
-                    var param = this.CreateInputSerializer(this.parameterType, HL7Request.RequestType.MessageRequest);
+                    
+                    var param = this.CreateInputSerializer(
+                        this.parameterType,
+                        HL7Request.RequestType.MessageRequest,
+                        rootName: request.ControlAct.Subject?.SubjectElementName,
+                        rootNamespace: HL7Constants.Namespace);
 
                     if (request.ControlAct != null && request.ControlAct.Subject != null)
                     {
@@ -70,7 +79,12 @@ namespace Abc.ServiceModel.HL7
                         throw new FormatException(string.Format(CultureInfo.InvariantCulture, SrProtocol.IsNotSet, "request.QueryControlAct"));
                     }
 
-                    parameters[0] = request.QueryControlAct.QueryContinuation.GetBody(this.CreateInputSerializer(this.parameterType, HL7Request.RequestType.QueryContinuationRequest));
+                    parameters[0] = request.QueryControlAct.QueryContinuation.GetBody(
+                        this.CreateInputSerializer(
+                            this.parameterType,
+                            HL7Request.RequestType.QueryContinuationRequest,
+                            rootName: request.QueryControlAct.QueryContinuation?.QueryContinuationElementName,
+                            rootNamespace: HL7Constants.Namespace));
                     break;
 
                 default:
@@ -80,7 +94,12 @@ namespace Abc.ServiceModel.HL7
                         throw new FormatException(string.Format(CultureInfo.InvariantCulture, SrProtocol.IsNotSet, "request.ControlAct"));
                     }
 
-                    parameters[0] = request.ControlAct.Subject.GetBody(this.CreateInputSerializer(this.parameterType, HL7Request.RequestType.MessageRequest));
+                    parameters[0] = request.ControlAct.Subject.GetBody(
+                        this.CreateInputSerializer(
+                            this.parameterType,
+                            HL7Request.RequestType.MessageRequest,
+                            rootName: request.ControlAct.Subject?.SubjectElementName,
+                            rootNamespace: HL7Constants.Namespace));
                     break;
             }
 

@@ -1,4 +1,4 @@
-namespace Abc.ServiceModel.Protocol.HL7
+﻿namespace Abc.ServiceModel.Protocol.HL7
 {
     using System;
     using System.Collections.Generic;
@@ -58,7 +58,7 @@ namespace Abc.ServiceModel.Protocol.HL7
         {
             XmlObjectSerializer xmlObjectSerializer = null;
 
-            string key = typeof(T).Name + type?.FullName + ":" + rootNamespace + ":" + rootName + ":True:";
+            string key = typeof(T).Name + type?.FullName + ":" + rootNamespace + ":" + rootName;
             _lock.EnterUpgradeableReadLock();
             try
             {
@@ -71,10 +71,17 @@ namespace Abc.ServiceModel.Protocol.HL7
                         {
                             if (xmlObjectSerializer == null)
                             {
-                                xmlObjectSerializer = serializerFactory(type, serializerType, rootName, rootNamespace);
+                                string normalizedRootName = rootName;
+                                if (normalizedRootName != null)
+                                {
+                                    normalizedRootName = normalizedRootName.Replace(":HasAttrWithPrefix:1", string.Empty);
+                                    normalizedRootName = normalizedRootName.Replace(":HasAttrWithPrefix:0", string.Empty);
+                                }
+
+                                xmlObjectSerializer = serializerFactory(type, serializerType, normalizedRootName, rootNamespace);
                             }
 
-                            _xmlSerializers.Add(key, xmlObjectSerializer);
+                           _xmlSerializers.Add(key, xmlObjectSerializer);
                         }
                     }
                     finally

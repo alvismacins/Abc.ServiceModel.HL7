@@ -58,14 +58,14 @@
         /// <param name="serializerType">Type of the serializer.</param>
         /// <param name="type">The type.</param>
         /// <returns>XmlObject Serializer</returns>
-        private static XmlObjectSerializer CreateSerializer(Type serializerType, Type type)
+        private static XmlObjectSerializer CreateSerializer(Type serializerType, Type type, string rootName, string rootNamespace)
         {
             if (serializerType != null)
             {
-                return HL7SubjectSerializerDefaults.CreateSerializer(serializerType, type);
+                return HL7SubjectSerializerDefaults.CreateSerializer(serializerType, type, rootName: rootName, rootNamespace: rootNamespace);
             }
 
-            return HL7SubjectSerializerDefaults.CreateSerializer(type);
+            return HL7SubjectSerializerDefaults.CreateSerializer(type, rootName: rootName, rootNamespace: rootNamespace);
         }
 
         /// <summary>
@@ -74,14 +74,14 @@
         /// <param name="serializerType">Type of the serializer.</param>
         /// <param name="type">The type.</param>
         /// <returns>XmlObject Serializer</returns>
-        private static XmlObjectSerializer CreateSerializerQueryContinuation(Type serializerType, Type type)
+        private static XmlObjectSerializer CreateSerializerQueryContinuation(Type serializerType, Type type, string rootName, string rootNamespace)
         {
             if (serializerType != null)
             {
-                return HL7QueryContinuationPayloadSerializerDefaults.CreateSerializer(serializerType, type);
+                return HL7QueryContinuationPayloadSerializerDefaults.CreateSerializer(serializerType, type, rootName: rootName, rootNamespace: rootNamespace);
             }
 
-            return HL7QueryContinuationPayloadSerializerDefaults.CreateSerializer(type);
+            return HL7QueryContinuationPayloadSerializerDefaults.CreateSerializer(type, rootName: rootName, rootNamespace: rootNamespace);
         }
 
         /// <summary>
@@ -90,49 +90,49 @@
         /// <param name="serializerType">Type of the serializer.</param>
         /// <param name="type">The type.</param>
         /// <returns>XmlObject Serializer</returns>
-        private static XmlObjectSerializer CreateSerializerQueryParamRequest(Type serializerType, Type type)
+        private static XmlObjectSerializer CreateSerializerQueryParamRequest(Type serializerType, Type type, string rootName, string rootNamespace)
         {
             if (serializerType != null)
             {
-                return HL7QueryByParameterPayloadSerializerDefaults.CreateSerializer(serializerType, type);
+                return HL7QueryByParameterPayloadSerializerDefaults.CreateSerializer(serializerType, type, rootName: rootName, rootNamespace: rootNamespace);
             }
 
-            return HL7QueryByParameterPayloadSerializerDefaults.CreateSerializer(type);
+            return HL7QueryByParameterPayloadSerializerDefaults.CreateSerializer(type, rootName: rootName, rootNamespace: rootNamespace);
         }
 
         [System.Obsolete("obsolte", true)]
-        private XmlObjectSerializer CreateInputSerializer(Type type)
+        private XmlObjectSerializer CreateInputSerializer(Type type, string rootName, string rootNamespace)
         {
-            return CreateSerializer(this.inputSerializerType, type);
+            return CreateSerializer(this.inputSerializerType, type, rootName: rootName, rootNamespace: rootNamespace);
         }
 
-        private XmlObjectSerializer CreateInputSerializer(Type type, HL7Request.RequestType subject)
+        private XmlObjectSerializer CreateInputSerializer(Type type, HL7Request.RequestType subject, string rootName, string rootNamespace)
         {
             switch (subject)
             {
                 case HL7Request.RequestType.MessageRequest:
-                    return CreateSerializer(this.inputSerializerType, type);
+                    return CreateSerializer(this.inputSerializerType, type, rootName: rootName, rootNamespace: rootNamespace);
                 case HL7Request.RequestType.QueryParamRequest:
-                    return CreateSerializerQueryParamRequest(this.inputSerializerType, type);
+                    return CreateSerializerQueryParamRequest(this.inputSerializerType, type, rootName: rootName, rootNamespace: rootNamespace);
                 case HL7Request.RequestType.QueryContinuationRequest:
-                    return CreateSerializerQueryContinuation(this.outputSerializerType, type);
+                    return CreateSerializerQueryContinuation(this.outputSerializerType, type, rootName: rootName, rootNamespace: rootNamespace);
                 default:
-                    return CreateSerializer(this.inputSerializerType, type);
+                    return CreateSerializer(this.inputSerializerType, type, rootName: rootName, rootNamespace: rootNamespace);
             }
         }
 
-        private XmlObjectSerializer CreateOutputSerializer(Type type, HL7Request.RequestType subject)
+        private XmlObjectSerializer CreateOutputSerializer(Type type, HL7Request.RequestType subject, string rootName, string rootNamespace)
         {
             switch (subject)
             {
                 case HL7Request.RequestType.MessageRequest:
-                    return CreateSerializer(this.outputSerializerType, type);
+                    return CreateSerializer(this.outputSerializerType, type, rootName: rootName, rootNamespace: rootNamespace);
                 case HL7Request.RequestType.QueryParamRequest:
-                    return CreateSerializerQueryParamRequest(this.outputSerializerType, type);
+                    return CreateSerializerQueryParamRequest(this.outputSerializerType, type, rootName: rootName, rootNamespace: rootNamespace);
                 case HL7Request.RequestType.QueryContinuationRequest:
-                    return CreateSerializerQueryContinuation(this.outputSerializerType, type);
+                    return CreateSerializerQueryContinuation(this.outputSerializerType, type, rootName: rootName, rootNamespace: rootNamespace);
                 default:
-                    return CreateSerializer(this.outputSerializerType, type);
+                    return CreateSerializer(this.outputSerializerType, type, rootName: rootName, rootNamespace: rootNamespace);
             }
         }
 

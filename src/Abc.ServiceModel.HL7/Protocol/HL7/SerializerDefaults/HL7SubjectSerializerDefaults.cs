@@ -1,4 +1,4 @@
-namespace Abc.ServiceModel.Protocol.HL7
+﻿namespace Abc.ServiceModel.Protocol.HL7
 {
     using System;
     using System.Diagnostics.Contracts;
@@ -27,20 +27,20 @@ namespace Abc.ServiceModel.Protocol.HL7
         /// <param name="serializerType">The serializer type.</param>
         /// <param name="type">The type.</param>
         /// <returns>The HL7 Subject serializer.</returns>
-        internal static XmlObjectSerializer CreateSerializer(Type serializerType, Type type)
+        internal static XmlObjectSerializer CreateSerializer(Type serializerType, Type type, string rootName, string rootNamespace)
         {
             if (serializerType == typeof(XElementObjectSerializer))
             {
                 return HL7SerializerCache.GetXElementObjectSerializer(
-                    rootName: HL7Constants.Elements.Subject,
-                    rootNamespace: HL7Constants.Namespace);
+                    rootName: string.IsNullOrWhiteSpace(rootName) ? HL7Constants.Elements.Subject : rootName,
+                    rootNamespace: string.IsNullOrWhiteSpace(rootNamespace) ? HL7Constants.Namespace : rootNamespace);
             }
-
+            
             return HL7SerializerCache.GetXmlObjectSerializer<XmlObjectSerializer>(
                type: type,
                serializerType: serializerType,
-               rootName: HL7Constants.Elements.Subject,
-               rootNamespace: HL7Constants.Namespace,
+               rootName: string.IsNullOrWhiteSpace(rootName) ? HL7Constants.Elements.Subject : rootName,
+               rootNamespace: string.IsNullOrWhiteSpace(rootNamespace) ? HL7Constants.Namespace : rootNamespace,
                serializerFactory: (_type, _serializerType, _rootName, _rootNamespace) =>
                     (XmlObjectSerializer)Activator.CreateInstance(_serializerType, _type, _rootName, _rootNamespace));
         }
@@ -50,7 +50,7 @@ namespace Abc.ServiceModel.Protocol.HL7
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns>The HL7 Subject serializer.</returns>
-        internal static XmlObjectSerializer CreateSerializer(Type type)
+        internal static XmlObjectSerializer CreateSerializer(Type type, string rootName, string rootNamespace)
         {
             if (type == null) { throw new ArgumentNullException("type", "type != null"); }
 
@@ -58,22 +58,22 @@ namespace Abc.ServiceModel.Protocol.HL7
             if (type.GetCustomAttributes(typeof(XmlTypeAttribute), true).Length > 0)
             {
                 return HL7SerializerCache.GetXmlSerializerObjectSerializer(
-                    type: type, 
-                    rootName: HL7Constants.Elements.Subject,
-                    rootNamespace: HL7Constants.Namespace);
+                    type: type,
+                    rootName: string.IsNullOrWhiteSpace( rootName ) ? HL7Constants.Elements.Subject : rootName,
+                    rootNamespace: string.IsNullOrWhiteSpace(rootNamespace) ? HL7Constants.Namespace : rootNamespace );
             }
 
             if (type == typeof(XElement))
             {
                 return HL7SerializerCache.GetXElementObjectSerializer(
-                    rootName: HL7Constants.Elements.Subject,
-                    rootNamespace: HL7Constants.Namespace);
+                    rootName: string.IsNullOrWhiteSpace(rootName) ? HL7Constants.Elements.Subject : rootName,
+                    rootNamespace: string.IsNullOrWhiteSpace(rootNamespace) ? HL7Constants.Namespace : rootNamespace);
             }
 
             return HL7SerializerCache.GetDataContractSerializer(
                     type: type,
-                    rootName: HL7Constants.Elements.Subject,
-                    rootNamespace: HL7Constants.Namespace);
+                    rootName: string.IsNullOrWhiteSpace(rootName) ? HL7Constants.Elements.Subject : rootName,
+                    rootNamespace: string.IsNullOrWhiteSpace(rootNamespace) ? HL7Constants.Namespace : rootNamespace);
         }
     }
 }

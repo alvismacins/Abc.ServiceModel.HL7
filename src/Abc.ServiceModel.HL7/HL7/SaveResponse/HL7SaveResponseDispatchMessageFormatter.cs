@@ -61,7 +61,12 @@ namespace Abc.ServiceModel.HL7
 
             if (responseMess != null)
             {
-                parameters[0] = responseMess.ControlAct.Subject.GetBody(this.CreateInputSerializer(this.parameterType, HL7Request.RequestType.MessageRequest));
+                parameters[0] = responseMess.ControlAct.Subject.GetBody(
+                    this.CreateInputSerializer(
+                        this.parameterType,
+                        HL7Request.RequestType.MessageRequest,
+                        rootName: responseMess.ControlAct.Subject.SubjectElementName,
+                        rootNamespace: HL7Constants.Namespace));
             }
             else
             {
@@ -69,7 +74,12 @@ namespace Abc.ServiceModel.HL7
 
                 if (responseMess2 != null)
                 {
-                    parameters[0] = responseMess2.ControlAct.Subject.GetBody(this.CreateInputSerializer(this.parameterType, HL7Request.RequestType.MessageRequest));
+                    parameters[0] = responseMess2.ControlAct.Subject.GetBody(
+                        this.CreateInputSerializer(
+                            this.parameterType, 
+                            HL7Request.RequestType.MessageRequest,
+                            rootName: responseMess2.ControlAct.Subject.SubjectElementName,
+                            rootNamespace: HL7Constants.Namespace));
                 }
                 else
                 {

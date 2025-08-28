@@ -1,5 +1,6 @@
 ﻿namespace Abc.ServiceModel.Protocol.HL7
 {
+    using Abc.ServiceModel.HL7.Extensions;
     using System;
     using System.Diagnostics.Contracts;
     using System.Runtime.Serialization;
@@ -36,7 +37,7 @@
         {
             if (body == null) {  throw new ArgumentNullException("body", "body != null"); }
 
-            return CreateQueryContinuation(body, HL7SubjectSerializerDefaults.CreateSerializer(body.GetType()));
+            return CreateQueryContinuation(body, HL7SubjectSerializerDefaults.CreateSerializer(body.GetType(), rootName: null, rootNamespace: null));
         }
 
         /// <summary>
@@ -68,6 +69,14 @@
         }
 
         /// <summary>
+        /// Gets the name of the QueryByParameterPayload element.
+        /// </summary>
+        /// <value>
+        /// The name of the QueryByParameterPayload element.
+        /// </value>
+        internal string QueryContinuationElementName { get; private set; }
+
+        /// <summary>
         /// Creates the reader.
         /// </summary>
         /// <returns>The XmlReader</returns>
@@ -83,7 +92,7 @@
         /// <returns>An object of type T that contains the body of this message.</returns>
         public T GetBody<T>()
         {
-            return (T)this.GetBody(HL7SubjectSerializerDefaults.CreateSerializer(typeof(T)));
+            return (T)this.GetBody(HL7SubjectSerializerDefaults.CreateSerializer(typeof(T), rootName: this.QueryContinuationElementName, rootNamespace: HL7Constants.Namespace));
         }
 
         /// <summary>
@@ -109,6 +118,7 @@
         /// <param name="writer">The writer.</param>
         public void WriteQueryContinuation(XmlWriter writer)
         {
+            this.QueryContinuationElementName = null;
             if (this.data != null)
             {
                 this.serializer.WriteObject(writer, this.data);
@@ -126,6 +136,7 @@
         /// <param name="writer">The writer.</param>
         public virtual void WriteQueryContinuation(XmlDictionaryWriter writer)
         {
+            this.QueryContinuationElementName = null;
             if (this.data != null)
             {
                 this.serializer.WriteObject(writer, this.data);
@@ -143,7 +154,10 @@
         /// <param name="reader">The reader.</param>
         protected virtual void ReadQueryContinuation(XmlReader reader)
         {
-            if (reader == null) {  throw new ArgumentNullException("reader", "reader != null"); }
+            if (reader == null) 
+            {
+                throw new ArgumentNullException("reader", "reader != null"); 
+            }
 
             // Subject
             if (!reader.IsStartElement(HL7Constants.Elements.QueryContinuation, HL7Constants.Namespace))
@@ -151,7 +165,27 @@
                 reader.ReadStartElement(HL7Constants.Elements.QueryContinuation, HL7Constants.Namespace);
             }
 
+            var prefix = reader.Prefix;
             this.xmlElement = (XElement)XElement.ReadFrom(reader);
+            this.QueryContinuationElementName = this.xmlElement.GetElementNameWithPrefix();
+
+            if (this.QueryContinuationElementName == null)
+            {
+                return;
+            }
+
+            //var containsAttributesFromThisNamespace = this.xmlElement.ContainsAttributesFromThisNamespace(prefix: prefix);
+            //this.QueryContinuationElementName += containsAttributesFromThisNamespace
+            //    ? ":HasAttrWithPrefix:1"
+            //    : ":HasAttrWithPrefix:0";
+
+            // Add missing hl7 namespace declaration if not present
+            if (!string.IsNullOrEmpty(prefix) &&
+                this.xmlElement.GetNamespaceOfPrefix(prefix) == null /* &&
+                containsAttributesFromThisNamespace*/)
+            {
+                this.xmlElement.Add(new XAttribute(XNamespace.Xmlns + prefix, HL7Constants.Namespace));
+            }
         }
     }
 }

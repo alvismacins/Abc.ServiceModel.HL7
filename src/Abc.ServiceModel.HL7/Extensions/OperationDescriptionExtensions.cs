@@ -1,4 +1,4 @@
-#if CoreWCF
+﻿#if CoreWCF
 namespace CoreWCF.Description
 #else
 namespace System.ServiceModel.Description
